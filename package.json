@@ -1,6 +1,6 @@
 {
-  "name": "autoindex_json",
-  "version": "0.1.0",
+  "name": "autoindex-json",
+  "version": "0.1.1",
   "description": "Serves directory listings for a given path in JSON format",
   "main": "index.js",
   "repository": {
@@ -8,12 +8,12 @@
     "url": "git+https://github.com/saravanabalagi/autoindex_json.git"
   },
   "keywords": [
+    "express",
     "autoindex",
-    "autoindexJson",
-    "serve-index",
-    "serveIndex",
-    "serveIndexJson",
-    "serve-index-json"
+    "json",
+    "nginx",
+    "serve",
+    "index"
   ],
   "author": "Saravanabalagi Ramachandran",
   "license": "MIT",

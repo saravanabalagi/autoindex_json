@@ -1,4 +1,4 @@
-# autoindex_json
+# autoindex-json
 
 Serves directory listings for a given path in JSON format. Output adheres to the [NGINX json autoindex](http://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex_format) format. If you would like to serve HTML files, take a look at [serve-index](https://github.com/expressjs/serve-index)
 
