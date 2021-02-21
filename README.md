@@ -74,13 +74,13 @@ Path to directory to be served
 
 *json* | optional
 
-```
+```javascript
 {
-    pathField: path (string)
+    pathField: "path"  //string
 }
 ```
 
-Value of `pathField` key in the URL (i.e. request.url.<pathField>) is taken as the path relative to `dir`.
+Value of `pathField` is the key to look in the URL (i.e. request.url.\<pathField>) to take as the path relative to `dir`.
 
 ## Licence
 
