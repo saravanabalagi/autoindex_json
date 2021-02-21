@@ -1,7 +1,13 @@
-# autoindex-json
+<h1 align="center">autoindex-json</h1>
+
+<div align="center">
+
+![npm](https://img.shields.io/npm/v/autoindex-json)
+![npm](https://img.shields.io/npm/l/autoindex-json)
+![npm](https://img.shields.io/npm/dm/autoindex-json)
 
 Serves directory listings for a given path in JSON format. Output adheres to the [NGINX json autoindex](http://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex_format) format. If you would like to serve HTML files, take a look at [serve-index](https://github.com/expressjs/serve-index)
-
+</div>
 
 ## Installation
 
@@ -44,6 +50,15 @@ GET http://localhost:3000/files?path=new_college
 [{"name":"README.md","type":"file","mtime":"Thu, 28 Jan 2021 02:07:03 GMT","size":2280},
 {"name":"city_centre","type":"directory","mtime":"Thu, 28 Jan 2021 02:15:21 GMT"},
 {"name":"new_college","type":"directory","mtime":"Thu, 28 Jan 2021 02:12:51 GMT"}]
+```
+
+This output conforms to [NGINX JSON autoindex](http://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex_format) output standards
+
+```
+location / {
+    autoindex on;
+    autoindex_format json;
+}
 ```
 
 ## Parameters
