@@ -4,7 +4,8 @@ const { readdir } = require('fs').promises;
 
 // default settings
 const defaultOptions = {
-  pathField: 'path'
+  pathField: 'path',
+  onErrorStatus4xx: true
 }
 
 const autoindexJson = (dir, options) => async function(req, res, next) {
@@ -12,8 +13,13 @@ const autoindexJson = (dir, options) => async function(req, res, next) {
   // set defaults and validate
   res.setHeader('Content-Type', 'application/json');
   if (options == null) options = defaultOptions;
+  else for(let option in defaultOptions)
+    if (!options.hasOwnProperty(option))
+      options[option] = defaultOptions[option];
+
+  // validate the request
   if (req.query[options.pathField] == null) {
-    res.status(400);
+    if(options.onErrorStatus4xx) res.status(400);
     res.send(JSON.stringify({error: `${options.pathField} is empty`}));
     return;
   }
@@ -24,11 +30,11 @@ const autoindexJson = (dir, options) => async function(req, res, next) {
   try { fstats = statSync(url); }
   catch(e) {
     if (e.code === 'ENOENT') {
-      res.status(404);
+      if(options.onErrorStatus4xx) res.status(404);
       res.send(JSON.stringify({error: 'File/Directory not found'}));
       return;
     }
-    res.status(400);
+    if(options.onErrorStatus4xx) res.status(400);
     res.send(JSON.stringify({error: e.message}));
     return;
   }

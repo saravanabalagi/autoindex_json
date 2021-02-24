@@ -63,12 +63,14 @@ location / {
 
 ## Error Handling
 
-If the given path is not found or accessible, then the response will be like
+If the given path is not found or accessible, then the response will be 4xx with content
 
 ```
 {"error":"File/Directory not found"}
 {"error":"<Error Message>"}
 ```
+
+The status code 4xx will get unavoidably logged in the browser console. So, if you want to avoid that, you can suppress settings setting the status alone and still get the same error JSON by setting `onErrorStatus4xx` option to false.
 
 ## Parameters
 
@@ -85,11 +87,14 @@ Path to directory to be served
 
 ```javascript
 {
-    pathField: "path"  //string
+    pathField: "path",       // string
+    onErrorStatus4xx: true   // bool
 }
 ```
 
 Value of `pathField` is the key to look in the URL (i.e. request.url.\<pathField>) to take as the path relative to `dir`.
+
+If `onErrorStatus4xx` is true, status code is set to 4xx on error. Else, error messages will be delivered in JSON, but with a 2xx response status code.
 
 ## Licence
 
