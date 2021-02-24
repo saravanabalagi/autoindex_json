@@ -20,9 +20,19 @@ const autoindexJson = (dir, options) => async function(req, res, next) {
 
   // once validation is passed
   const url = path.join(dir, req.query[options.pathField]);
-  const fstats = statSync(url);
+  try { const fstats = statSync(url); }
+  catch(e) {
+    if (e.code === 'ENOENT') {
+      res.status(404);
+      res.send(JSON.stringify({error: 'File/Directory not found'}));
+      return;
+    }
+    res.status(400);
+    res.send(JSON.stringify({error: e.message}));
+    return;
+  }
 
-  // if url is a file 
+  // if url is a file
   if (fstats.isFile()) {
     res.send(getStats(fstats, url));
     return;

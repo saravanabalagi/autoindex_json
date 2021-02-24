@@ -61,6 +61,15 @@ location / {
 }
 ```
 
+## Error Handling
+
+If the given path is not found or accessible, then the response will be like
+
+```
+{"error":"File/Directory not found"}
+{"error":"<Error Message>"}
+```
+
 ## Parameters
 
 ### dir
