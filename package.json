@@ -1,6 +1,6 @@
 {
   "name": "autoindex-json",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Serves directory listings for a given path in JSON format",
   "main": "index.js",
   "repository": {
@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/saravanabalagi/autoindex_json/issues"
   },
-  "homepage": "https://github.com/saravanabalagi/autoindex_json#readme"
+  "homepage": "https://github.com/saravanabalagi/autoindex_json#readme",
+  "devDependencies": {
+    "express": "^4.17.1"
+  }
 }

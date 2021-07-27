@@ -26,6 +26,7 @@ Use it in your node server app
 const express = require('express');
 const autoindexJson = require('autoindex-json');
 
+const app = express();
 const DATA_DIR = '/path/to/your/data';
 app.use('/files', express.static(DATA_DIR), autoindexJson(DATA_DIR));
 app.listen(3000);
@@ -88,7 +89,8 @@ Path to directory to be served
 ```javascript
 {
     pathField: "path",       // string
-    onErrorStatus4xx: true   // bool
+    onErrorStatus4xx: true,  // bool
+    limit: null              // int, or null for no limit
 }
 ```
 

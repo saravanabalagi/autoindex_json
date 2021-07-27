@@ -20,7 +20,7 @@ const autoindexJson = (dir, options) => async function(req, res, next) {
   // validate the request
   if (req.query[options.pathField] == null) {
     if(options.onErrorStatus4xx) res.status(400);
-    res.send(JSON.stringify({error: `${options.pathField} is empty`}));
+    res.send(JSON.stringify({error: `${options.pathField} parameter is empty`}));
     return;
   }
 
@@ -46,7 +46,29 @@ const autoindexJson = (dir, options) => async function(req, res, next) {
   }
 
   // if url is a directory
-  const files = await readdir(url);
+  let files = await readdir(url);
+
+  // pagination
+  const limit = parseInt(req.query['limit'] || -1);
+  const page = parseInt(req.query['page'] || -1);
+  if (limit > 0 && files.length > limit ) {
+    
+    // if page number not specified, show stats
+    if (page < 0) {
+      const info = {
+        files: files.length,
+        pages: Math.ceil(files.length / limit)
+      }
+      res.send(info);
+      return;
+    }
+
+    // else if page number is specified
+    const startIdx = page * limit;
+    files = files.slice(startIdx, startIdx + limit);
+  }
+
+  // fill in stats to send the response
   stats = [];
   for (const file of files) {
     const filepath = path.join(url, file);
@@ -56,6 +78,7 @@ const autoindexJson = (dir, options) => async function(req, res, next) {
 
   // send the json response
   res.send(stats);
+  return;
 }
 
 const getStats = (fstats, filepath) => {
