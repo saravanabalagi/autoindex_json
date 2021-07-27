@@ -1,6 +1,6 @@
 {
   "name": "autoindex-json",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Serves directory listings for a given path in JSON format",
   "main": "index.js",
   "repository": {

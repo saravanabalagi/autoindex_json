@@ -4,7 +4,6 @@ const { readdir } = require('fs').promises;
 
 // default settings
 const defaultOptions = {
-  pathField: 'path',
   onErrorStatus4xx: true
 }
 
@@ -17,15 +16,8 @@ const autoindexJson = (dir, options) => async function(req, res, next) {
     if (!options.hasOwnProperty(option))
       options[option] = defaultOptions[option];
 
-  // validate the request
-  if (req.query[options.pathField] == null) {
-    if(options.onErrorStatus4xx) res.status(400);
-    res.send(JSON.stringify({error: `${options.pathField} parameter is empty`}));
-    return;
-  }
-
   // once validation is passed
-  const url = path.join(dir, req.query[options.pathField]);
+  const url = path.join(dir, req.path);
   let fstats;
   try { fstats = statSync(url); }
   catch(e) {
@@ -41,7 +33,8 @@ const autoindexJson = (dir, options) => async function(req, res, next) {
 
   // if url is a file
   if (fstats.isFile()) {
-    res.send(getStats(fstats, url));
+    if (req.query['info'] == null) next();
+    else res.send(getStats(fstats, url));
     return;
   }
 
