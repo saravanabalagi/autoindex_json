@@ -6,7 +6,7 @@
 ![npm](https://img.shields.io/npm/l/autoindex-json)
 ![npm](https://img.shields.io/npm/dm/autoindex-json)
 
-Serves directory listings for a given path in JSON format. Output adheres to the [NGINX json autoindex](http://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex_format) format. Supports pagination. If you would like to serve HTML files instead, take a look at [serve-index](https://github.com/expressjs/serve-index)
+Serves directory contents and file info for a given path in JSON format. Output adheres to the [NGINX json autoindex](http://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex_format) format. Supports very large folders with pagination and `exists` queries. 
 </div>
 
 ## Installation
@@ -22,7 +22,7 @@ yarn add autoindex-json
 
 Use it in your node server app
 
-```javascript
+```js
 const express = require('express');
 const autoindexJson = require('autoindex-json');
 
@@ -57,13 +57,13 @@ GET http://localhost:3000/files/new_college?info
 {"name":"city_centre","type":"directory","mtime":"Thu, 28 Jan 2021 02:15:21 GMT"},
 {"name":"new_college","type":"directory","mtime":"Thu, 28 Jan 2021 02:12:51 GMT"}]
 ```
-```
+```py
 GET http://localhost:3000/files/new_college/README.md?info
 ```
 ```json
 {"name":"README.md","type":"file","mtime":"Thu, 28 Jan 2021 02:07:03 GMT","size":2280}
 ```
-```
+```py
 GET http://localhost:3000/files/new_college/README.md
 ```
 ```md
@@ -72,7 +72,7 @@ This is a *sample* README file content handled by express.static
 
 This output conforms to [NGINX JSON autoindex](http://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex_format) output standards
 
-```
+```nginx
 location / {
     autoindex on;
     autoindex_format json;
@@ -85,11 +85,37 @@ We suggest using `autoindexJson` before `express.static`. Otherwise, `someFile?i
 
 If you would only like to serve info JSON for directories, you shall swap the order and it would still work.
 
+## Error
+
+If the given path is not found or accessible, then the response will be 4xx with content
+
+```json
+{"error":"File/Directory not found"}
+{"error":"<Error Message>"}
+```
+
+The status code 4xx will get unavoidably logged in the browser console. So, if you want to avoid that, you can suppress settings setting the status alone and still get the same error JSON by setting `onErrorStatus4xx` option to false.
+
+## Exists
+
+One can directly query the directory and 
+- if the directory exists, the files and directories inside are listed
+- if not, a JSON with `error` field is returned. 
+
+However, this is _not_ suitable for making a large number of `exists` queries as there is an unnecessary additional overhead of querying the directory contents. 
+
+By adding `exists` parameter, response is sent based only on whether the query path exists:
+
+```py
+GET http://localhost:3000/files/oxford_robotcar?exists      # {"exists": true}
+GET http://localhost:3000/files/oxford_1_robotcar?exists    # {"exists": false}
+```
+
 ## Pagination
 
 Autoindex_json supports query based dynamic pagination. Use the `limit` parameter to retrieve information regarding the number of files and number of pages corresponding to the limit. 
 
-```
+```py
 GET http://localhost:3000/files?limit=4
 ```
 ```json
@@ -101,7 +127,7 @@ GET http://localhost:3000/files?limit=4
 
 Then simply query the required page using `page` parameter.
 
-```
+```py
 GET http://localhost:3000/files?limit=4&page=0
 ```
 ```json
@@ -113,7 +139,7 @@ GET http://localhost:3000/files?limit=4&page=0
 ]
 ```
 
-```
+```py
 GET http://localhost:3000/files?limit=4&page=1
 ```
 
@@ -124,7 +150,7 @@ GET http://localhost:3000/files?limit=4&page=1
 
 Note that the pages queried should be indexed from 0 and not 1! If the page limit is exceeded, an empty array is returned.
 
-```
+```py
 GET http://localhost:3000/files?limit=4&page=2
 ```
 ```json
@@ -133,22 +159,10 @@ GET http://localhost:3000/files?limit=4&page=2
 
 Note that the `info` parameter is implicit in the above examples. The following lines will yield the same response, as the statically served root is a directory.
 
-```
+```py
 GET http://localhost:3000/files?limit=4
 GET http://localhost:3000/files?info&limit=4
 ```
-
-## Error Handling
-
-If the given path is not found or accessible, then the response will be 4xx with content
-
-```
-{"error":"File/Directory not found"}
-{"error":"<Error Message>"}
-```
-
-The status code 4xx will get unavoidably logged in the browser console. So, if you want to avoid that, you can suppress settings setting the status alone and still get the same error JSON by setting `onErrorStatus4xx` option to false.
-
 
 ## Options
 
@@ -163,7 +177,7 @@ Path to directory to be served
 
 *json* | optional
 
-```javascript
+```js
 {
     onErrorStatus4xx: true,  // bool
 }

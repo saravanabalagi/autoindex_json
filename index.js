@@ -23,13 +23,20 @@ const autoindexJson = (dir, options) => async function(req, res, next) {
   catch(e) {
     if (e.code === 'ENOENT') {
       if(options.onErrorStatus4xx) res.status(404);
-      res.send(JSON.stringify({error: 'File/Directory not found'}));
+      if (req.query['exists'] != null) res.send(JSON.stringify({ exists: false }));
+      else res.send(JSON.stringify({error: 'File/Directory not found'}));
       return;
     }
     if(options.onErrorStatus4xx) res.status(400);
     res.send(JSON.stringify({error: e.message}));
     return;
   }
+
+  // is it is an exists query
+  if (req.query['exists'] != null) {
+    res.send({exists: true});
+    return;
+  } 
 
   // if url is a file
   if (fstats.isFile()) {
