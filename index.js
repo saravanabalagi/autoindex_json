@@ -10,6 +10,8 @@ const defaultOptions = {
 const autoindexJson = (dir, options) => async function(req, res, next) {
 
   // set defaults and validate
+  // all responses including errors are in json format
+  // except for files directly served
   res.setHeader('Content-Type', 'application/json');
   if (options == null) options = defaultOptions;
   else for(let option in defaultOptions)
@@ -40,7 +42,10 @@ const autoindexJson = (dir, options) => async function(req, res, next) {
 
   // if url is a file
   if (fstats.isFile()) {
-    if (req.query['info'] == null) next();
+    if (req.query['info'] == null) {
+      res.removeHeader('Content-Type');
+      next();
+    }
     else res.send(getStats(fstats, url));
     return;
   }
